@@ -1,0 +1,43 @@
+optimizer : {
+  type: AdamW,
+  kwargs: {
+  lr : 0.0005,
+  weight_decay : 0.005,
+  betas: [0.9, 0.99]
+}}
+
+scheduler: {
+  type: CosLR,
+  kwargs: {
+    epochs: 500,
+    initial_epochs: 20,
+    lr_min: 0.00001
+}}
+
+validation_frequency: 5
+epochs : 500
+gradient_clip: 10
+report_wasserstein: True
+random_split: True
+split_ratio: [0.9, 0.1]
+
+data_path_ref: "half_resolution/V-5000/train_V5000_2500_id_0.h5"
+
+n_frequencies: 300
+max_frequency: 250
+
+
+data_paths: [
+            "half_resolution/V-5000/train_V5000_2500_id_0.h5",
+            "half_resolution/V-5000/train_V5000_2500_id_1.h5",
+            ]
+data_paths_test: ["half_resolution/V-5000/test_V5000_1000.h5"]
+
+dataset_keys: ["bead_patterns", "z_abs_velocity", "z_vel_mean_sq", "sample_mat"]
+
+dataset_class: "hdf5"
+conditional: False
+
+filter_dataset: True
+filter_orientation: "larger"
+filter_type: "bead_ratio"

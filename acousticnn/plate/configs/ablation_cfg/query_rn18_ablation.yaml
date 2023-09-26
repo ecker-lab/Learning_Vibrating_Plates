@@ -1,0 +1,9 @@
+name: "ablation_query_rn18"
+args: 
+  decoder.hidden_channels_width: [[256], [512], [1024]]
+  decoder.hidden_channels_depth: [4, 6, 8]
+
+default_cfg_args:
+  epochs: 150
+  scheduler.kwargs.epochs: 150
+  dataset_keys: ["bead_patterns", "z_vel_mean_sq", "sample_mat"]

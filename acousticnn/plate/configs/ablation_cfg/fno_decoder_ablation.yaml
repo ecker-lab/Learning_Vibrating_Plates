@@ -1,0 +1,6 @@
+name: "ablation_fno_decoder"
+args: {
+  decoder.hidden_channels: [32, 128, 64],
+  decoder.n_modes: [16, 32, 64],
+  decoder.n_layers: [2, 4, 8],
+  }

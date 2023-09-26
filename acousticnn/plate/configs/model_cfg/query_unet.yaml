@@ -1,0 +1,7 @@
+model_name: "QueryUNet"
+field_solution_map: True
+
+freq_batches: 5
+scaling_factor: 32
+
+dataset_keys: ["bead_patterns", "z_abs_velocity", "z_vel_mean_sq", "sample_mat"]

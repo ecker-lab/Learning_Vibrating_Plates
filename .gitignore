@@ -1,0 +1,27 @@
+
+# folders
+/data
+*/experiments
+*/*/experiments
+/tmp
+/results
+/experiments
+*plots
+*.pyc
+sandbox
+.vscode
+
+
+# pytorch data
+*.pt
+
+
+
+*.pdf
+# package files and folders
+*.egg-info/
+build/
+dist/
+*.html
+
+wandb/

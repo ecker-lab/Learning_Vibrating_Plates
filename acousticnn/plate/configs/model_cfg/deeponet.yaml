@@ -1,0 +1,9 @@
+model_name: "DeepONet"
+field_solution_map: False
+
+encoder: {
+name: "ResNet",
+hidden_channels: [64, 128, 256, 512]
+}
+
+dataset_keys: ["bead_patterns", "z_vel_mean_sq", "sample_mat"]
