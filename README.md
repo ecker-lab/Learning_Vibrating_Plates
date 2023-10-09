@@ -1,10 +1,14 @@
 # Repository for: Vibroacoustic Frequency Response Prediction with Query-based Operator Networks
+![Methods image](readme_figure.png?raw=true "Title")
 
-This repository is in a preliminary stage. Additional documentation will be added soon.
+Understanding vibroacoustic wave propagation in mechanical structures like airplanes, cars and houses is crucial to ensure health and comfort of their users. To analyze such systems, designers and engineers primarily consider the dynamic response in the frequency domain, which is computed through expensive numerical simulations like the finite element method. In contrast, data-driven surrogate models offer the promise of speeding up these simulations, thereby facilitating tasks like design optimization, uncertainty quantification, and design space exploration. We present a structured benchmark for a representative vibroacoustic problem: Predicting the frequency response for vibrating plates with varying forms of beadings. The benchmark features a total of \nsamples plate geometries with an associated numerical solution and introduces evaluation metrics to quantify the prediction quality. 
+To address the frequency response prediction task, we propose a novel frequency query operator model, which is trained to map plate geometries to frequency response functions. By integrating principles from operator learning and implicit models for shape encoding, our approach effectively addresses the prediction of resonance peaks of frequency responses. We evaluate the method on our vibrating-plates benchmark and find that it outperforms DeepONets, Fourier Neural Operators and more traditional neural network architectures.
 
-## Data and pretrained models
+## Data
 
-Data available from: to.be.published
+The data is available from: https://doi.org/10.25625/UWF7RB
+
+view_dataset.ipynb gives an example how to open the files saved in the hdf5 format and visualize the samples.
 
 ## Setup
 
