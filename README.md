@@ -1,4 +1,6 @@
 # Repository for: Vibroacoustic Frequency Response Prediction with Query-based Operator Networks
+Preprint available from [arXiv](https://arxiv.org/abs/2310.05469).
+
 ![Methods image](readme_figure.png?raw=true "Title")
 
 Understanding vibroacoustic wave propagation in mechanical structures like airplanes, cars and houses is crucial to ensure health and comfort of their users. To analyze such systems, designers and engineers primarily consider the dynamic response in the frequency domain, which is computed through expensive numerical simulations like the finite element method. In contrast, data-driven surrogate models offer the promise of speeding up these simulations, thereby facilitating tasks like design optimization, uncertainty quantification, and design space exploration. We present a structured benchmark for a representative vibroacoustic problem: Predicting the frequency response for vibrating plates with varying forms of beadings. The benchmark features a total of \nsamples plate geometries with an associated numerical solution and introduces evaluation metrics to quantify the prediction quality. 
