@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from acousticnn.model import Film
 
 
-# model adapted from https://github.com/dome272/Diffusion-Models-pytorch
+# model adapted from https://github.com/dome272/Diffusion-Models-pytorch  This code is provided under the Apache-2.0 license.
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels, mid_channels=None, residual=False):
         super().__init__()
