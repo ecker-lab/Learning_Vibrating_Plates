@@ -7,11 +7,9 @@ Understanding vibroacoustic wave propagation in mechanical structures like airpl
 To address the frequency response prediction task, we propose a novel frequency query operator model, which is trained to map plate geometries to frequency response functions. By integrating principles from operator learning and implicit models for shape encoding, our approach effectively addresses the prediction of resonance peaks of frequency responses. We evaluate the method on our vibrating-plates benchmark and find that it outperforms DeepONets, Fourier Neural Operators and more traditional neural network architectures.
 
 
-## Data Download
+## Data
 
-The data is available from: https://doi.org/10.25625/UWF7RB
-
-To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings:
+To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
 | Setting        | Dataset Download                                             | Dataset Size |
 | ----------- | :----------------------------------------------------------- | ------------ |
@@ -27,21 +25,29 @@ view_dataset.ipynb gives an example how to open the files saved in the hdf5 form
 
 ## Setup
 
-in acousticnn/plate/configs/main_dir.py change data_dir to where you saved the data. Change main_dir to the root path of the repository, i.e. /user/xyz/repository.
+1. To be able to reproduce the trainings and run the code, you need to set up a python environment with the required packages. We provide a setup script that set ups the environment based on conda. Run the following to set up the environment:
 
-Given an installation of conda, run the following to setup the environment:
 ``
 bash setup.sh
 ``
 
+2. This repository employs [Weights and Biases](https://wandb.ai/) for logging. To be able to use it you must have an account and login by running:
+
+``
+wandb login
+``
+
+3. Further, you need to define the path, where you saved the data and the path of the repository. These are defined in the file  acousticnn/plate/configs/main_dir.py. Change data_dir to where you saved the data. Change main_dir to the root path of the repository, i.e. /user/xyz/repository. You can also specify the WandB project name you want to log to in this file.
+
+
 ## Train a model 
 
-``
+```
 cd acousticnn/plate
-python run.py --model_cfg query_rn18.yaml --config fsm_V5000.yaml --dir path/to/logs
-``
+python scripts/run.py --model_cfg query_rn18.yaml --config fsm_V5000.yaml --dir path/to/logs
+```
 
-Change the model_cfg and config args to specify the model and dataset respectively. --dir specifies the save and log directory within the folder acousticnn/plate/experiments.
+Change the model_cfg and config args to specify the model architecture and dataset respectively. The config files are saved in acousticnn/plate/configs. --dir specifies the save and log directory within the folder acousticnn/plate/experiments.
 
 
 ## Evaluate a model 
@@ -49,6 +55,6 @@ Change the model_cfg and config args to specify the model and dataset respective
 Within acousticnn/plate use evaluate_fr.ipynb for frequency response prediction models or evaluate_fsm.ipynb for field solution map prediction models. 
 
 
-## Aknowledgments
+## Acknowledgments
 
-Parts of this code are built or taken from [Point-MAE](https://github.com/Pang-Yatian/Point-MAE), [PDEBench](https://github.com/pdebench/PDEBench) and (this repository)[https://github.com/dome272/Diffusion-Models-pytorch].
+Parts of this code built upon [Point-MAE](https://github.com/Pang-Yatian/Point-MAE), [PDEBench](https://github.com/pdebench/PDEBench) and [this repository](https://github.com/dome272/Diffusion-Models-pytorch). 

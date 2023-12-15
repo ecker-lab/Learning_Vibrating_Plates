@@ -1,14 +1,12 @@
-conda env remove -n acoustics
-conda create -n acoustics pytorch torchvision torchaudio pytorch-cuda=11.7 timm -c pytorch -c nvidia -c conda-forge 
+conda create -n acoustics pytorch=2.0 torchvision=0.15 torchaudio=2.0 pytorch-cuda=11.7 timm=0.9 -c pytorch -c nvidia -c conda-forge 
 
 conda activate acoustics
-pip install munch torchinfo matplotlib ipykernel jupyter transformers scipy wandb 
+pip install munch==4.0 torchinfo==1.8 matplotlib==3.7 ipykernel==6.25 jupyter==1.0 transformers==4.35 scipy==1.11 wandb 
 
 # to run fno and deeponet
-pip insall deepxdeneuraloperator tensorly tensorly-torch opt_einsum zarr
+pip install deepxde==1.10 neuraloperator==0.2 tensorly==0.8 tensorly-torch==0.4 opt_einsum==3.3 zarr==2.16
 
-pip install h5py hdf5plugin
+pip install h5py==3.10 hdf5plugin==4.2
 pip install -e .
 
 python -m ipykernel install --user --name=acoustics
-

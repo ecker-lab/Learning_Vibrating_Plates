@@ -4,6 +4,8 @@ from acousticnn.plate.model import model_factory
 from acousticnn.utils.builder import build_opti_sche
 from acousticnn.utils.logger import init_train_logger, print_log
 from acousticnn.utils.argparser import get_args, get_config
+from acousticnn.plate.configs.main_dir import wandb_project
+
 from torchinfo import summary
 import wandb, time, torch
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
@@ -43,10 +45,9 @@ def main():
 
 
 def start_wandb(args, config):
-    wandb.init(project="plate", entity="jans")
+    wandb.init(project=wandb_project)
     wandb.config.update(config)
     wandb.run.name = args.dir_name + "_" + str(time.time())
-
 
 if __name__ == '__main__':
     main()

@@ -11,7 +11,7 @@ class full_resolution_G5000:
         ["SM8ATR", "full_resolution_g5000_1500_id_1.h5"],
         ["VE9UXU", "full_resolution_test_g5000_500_id_0.h5"],
         ["NGIFRH", "full_resolution_test_g5000_500_id_1.h5"],
-        ["AW1TSR"  "full_resolution_train_g5000_2000.h5"]
+        ["AW1TSR",  "full_resolution_train_g5000_2000.h5"]
     ]
 
 class full_resolution_V5000:
