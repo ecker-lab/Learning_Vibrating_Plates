@@ -9,6 +9,13 @@ To address the frequency response prediction task, we propose a novel frequency 
 
 ## Data
 
+
+
+https://github.com/ecker-lab/FQ-Operator/assets/64748695/ede122a7-b409-429c-b4c7-d2ec74ac8e19
+
+
+
+The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed.
 To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
 | Setting        | Dataset Download                                             | Dataset Size |
