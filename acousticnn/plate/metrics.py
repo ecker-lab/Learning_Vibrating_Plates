@@ -70,23 +70,24 @@ def _peak_frequency_error(actual_amplitudes, predicted_amplitudes, prominence_th
     matched_frequency_distance = np.mean(frequency_diffs[row_indices, col_indices])
     # Compute number of non-matched peaks
     peak_ratio = np.abs(len(predicted_peaks)) / len(actual_peaks)
-    return peak_ratio, matched_amplitude_distance, matched_frequency_distance, len(actual_peaks)
+    save_peak_ratio = np.min((peak_ratio, len(actual_peaks) / np.abs(len(predicted_peaks))))
+    return peak_ratio, matched_amplitude_distance, matched_frequency_distance, len(actual_peaks), save_peak_ratio
 
 
 def peak_frequency_error(actual_amplitudes, predicted_amplitudes, prominence_threshold=0.5):
     # Number of samples
     n_samples = actual_amplitudes.shape[0]
-    ratios, n_peaks = [], []
+    ratios, save_ratios, n_peaks = [], [], []
     amplitude_distance, frequency_distance = [], []
 
     # Loop over samples
     for i in range(n_samples):
-        peak_ratio, matched_amplitude_distance, matched_frequency_distance, n_peak = _peak_frequency_error(
+        peak_ratio, matched_amplitude_distance, matched_frequency_distance, n_peak, save_peak_ratio = _peak_frequency_error(
             actual_amplitudes[i], predicted_amplitudes[i], prominence_threshold
         )
-        ratios.append(peak_ratio), n_peaks.append(n_peak)
+        ratios.append(peak_ratio), n_peaks.append(n_peak), save_ratios.append(save_peak_ratio)
         amplitude_distance.append(matched_amplitude_distance), frequency_distance.append(matched_frequency_distance)
 
-    results = {"peak_ratio": np.array(ratios), "n_peaks": np.array(n_peaks),
-               "amplitude_distance": np.array(amplitude_distance), "frequency_distance": np.array(frequency_distance)}
+    results = {"peak_ratio": np.array(ratios), "save_peak_ratio": np.array(save_ratios), "amplitude_distance": np.array(amplitude_distance),
+                 "frequency_distance": np.array(frequency_distance)}
     return results

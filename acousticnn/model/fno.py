@@ -7,9 +7,9 @@ from neuralop.models import FNO as FNOBlock
 
 
 class FNOConditionalBlock(FNOBlock):
-    def __init__(self, hidden_channels, conditional, **kwargs):
+    def __init__(self, hidden_channels, conditional, len_conditional=None, **kwargs):
         super().__init__(hidden_channels=hidden_channels, **kwargs)
-        self.film = Film(4, hidden_channels)
+        self.film = Film(len_conditional, hidden_channels)
         self.conditional = conditional
 
     def forward(self, x, conditional=None):
@@ -35,15 +35,15 @@ class FNOConditionalBlock(FNOBlock):
 
 
 class FNO(nn.Module):
-    def __init__(self, c_in=3, c_out=300, conditional=False, n_modes=16, hidden_channels=64, n_layers=2, tfno=False, film=True, **kwargs):
+    def __init__(self, c_in=3, c_out=300, conditional=False, n_modes=16, hidden_channels=64, n_layers=2, tfno=False, film=True, len_conditional=None, **kwargs):
         super().__init__()
         self.conditional = conditional
         self.film = film
         if self.film is True and self.conditional is True:
             self.fno1 = FNOConditionalBlock(n_modes=[n_modes, n_modes], in_channels=1 + 2, hidden_channels=hidden_channels,
-                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional)
+                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional, len_conditional=len_conditional)
         elif self.conditional is True:
-            in_channels = 3 + self.conditional * 4
+            in_channels = 3 + self.conditional * len_conditional
             self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=4)
         else:
             in_channels = 3 
@@ -73,7 +73,7 @@ class FNO(nn.Module):
 
 
 class FNODecoder(nn.Module):
-    def __init__(self, hidden_channels, n_modes, n_layers, tfno, in_dim=1024, out_dim=300, conditional=False, **kwargs):
+    def __init__(self, hidden_channels, n_modes, n_layers, tfno, in_dim=1024, out_dim=300, conditional=False, len_conditional=None, **kwargs):
         super().__init__()
         self.out_dim = out_dim
         self.conditional = conditional
@@ -84,7 +84,7 @@ class FNODecoder(nn.Module):
             self.decoder = FNOBlock(n_modes=[n_modes], in_channels=2, hidden_channels=hidden_channels, n_layers=n_layers)
         else:
             self.decoder = FNOConditionalBlock(n_modes=[n_modes, n_modes], in_channels=1 + 2, hidden_channels=hidden_channels,
-                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional)
+                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional, len_conditional=None)
     @staticmethod
     def add_positional_encoding(tensor):
         B, d = tensor.shape

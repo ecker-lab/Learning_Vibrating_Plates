@@ -54,7 +54,7 @@ def train_autoencoder(args, net, dataloader, valloader, optimizer, scheduler, lo
         for batch in dataloader:
             optimizer.zero_grad()
             image, output = batch["bead_patterns"], batch["z_vel_mean_sq"]
-            image = nn.functional.interpolate(image, img_shape) / 255
+            image = nn.functional.interpolate(image, img_shape) /image.max()
             image, output = image.to(args.device), output.to(args.device)
             prediction = net(image)
             loss = torch.nn.functional.mse_loss(prediction, image)
@@ -63,13 +63,13 @@ def train_autoencoder(args, net, dataloader, valloader, optimizer, scheduler, lo
             optimizer.step()
             if scheduler is not None: 
                 scheduler.step(epoch)
-        print_log(f"training: {np.mean(losses):4.4}", logger=logger)
+        print_log(f"Epoch: {epoch}, Training loss: {np.mean(losses):4.4}", logger=logger)
         
         net.eval()
         with torch.no_grad():
             for batch in dataloader:
                 image, output = batch["bead_patterns"], batch["z_vel_mean_sq"]
-                image = nn.functional.interpolate(image, img_shape) / 255
+                image = nn.functional.interpolate(image, img_shape) /image.max()
                 image, output = image.to(args.device), output.to(args.device)
                 prediction = net(image)
                 loss_val = torch.nn.functional.mse_loss(prediction, image)
@@ -90,7 +90,7 @@ def generate_encoding(dataloader, net, use_net=True):
             image, output, conditional = batch["bead_patterns"], batch["z_vel_mean_sq"], batch["sample_mat"]
             B = image.shape[0]
             if use_net is True:
-                image = (nn.functional.interpolate(image, img_shape) / 255).cuda()
+                image = (nn.functional.interpolate(image, img_shape) /image.max()).cuda()
                 encoding = np.hstack((net.encoder(image).view(B, -1).detach().cpu().numpy(), conditional))
             else:
                 encoding = np.hstack((image.view(B, -1), conditional))

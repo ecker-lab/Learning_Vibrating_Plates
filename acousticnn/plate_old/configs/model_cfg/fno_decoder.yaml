@@ -1,0 +1,17 @@
+model_name: "ResNet"
+field_solution_map: False
+
+encoder: {
+name: "resnet18",
+hidden_channels: [64, 128, 256, 512],
+}
+
+decoder: {
+  name: "fno",
+  hidden_channels: 64,
+  n_modes: 16,
+  n_layers: 4,
+  tfno: False
+}
+
+dataset_keys: ["bead_patterns", "z_vel_mean_sq", "sample_mat"]

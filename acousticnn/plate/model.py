@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from acousticnn.model import ResNet18, get_resnet, get_vit
-from acousticnn.model import UNet, Film, QueryUNet, FNODecoder, FNO
+from acousticnn.model import UNet, Film, FNODecoder, FNO, LocalNet
 
 
 class MLP(nn.Module):
@@ -37,15 +37,46 @@ class ImplicitDecoder(nn.Module):
         self.query_frequencies = torch.linspace(-1, 1, out_dim).float()
         self.out_dim = out_dim
 
-    def forward(self, x):
+    def forward(self, x, query_filter_fn=None):
         B = x.shape[0]
         x = x.reshape(B, -1)
-        x = x.repeat_interleave(len(self.query_frequencies), dim=0)  # B*200 x num_parameters
-        x = torch.hstack((x, self.query_frequencies.repeat(B).view(-1, 1).to(x.device)))
+        if query_filter_fn is not None:
+            queries = query_filter_fn(self.query_frequencies)
+        else:
+            queries = self.query_frequencies
+        x = x.repeat_interleave(len(queries), dim=0)  
+        x = torch.hstack((x, queries.repeat(B).view(-1, 1).to(x.device)))
         x = self.decoder(x)
-        # TODO Can I use einsum to do this more efficiently? x = torch.einsum("bi,ni->bn", x_func, x_loc)
 
-        return x.view(B, self.out_dim)
+        return x.view(B, len(queries))
+
+
+# Todo
+class FilmDecoder(nn.Module):
+    def __init__(self, in_dim=1024, out_dim=300, hidden_channels_width=[256], hidden_channels_depth=4):
+        super().__init__()
+        hidden_channels = hidden_channels_width * hidden_channels_depth
+        self.decoder = MLP(in_dim, hidden_channels=hidden_channels + [1], norm_layer=None)
+        self.query_frequencies = torch.linspace(-1, 1, out_dim).float()
+        self.out_dim = out_dim
+        self.queryfilm = Film(1, in_dim)
+
+    def redefine_out_dim(self, out_dim):
+        self.query_frequencies = torch.linspace(-1, 1, out_dim).float()
+        self.out_dim = out_dim
+
+    def forward(self, x, query_filter_fn=None):
+        B = x.shape[0]
+        x = x.reshape(B, -1)
+        if query_filter_fn is not None:
+            queries = query_filter_fn(self.query_frequencies)
+        else:
+            queries = self.query_frequencies
+        x = x.repeat_interleave(len(queries), dim=0)  
+        qf = queries.repeat(B).view(-1, 1).to(x.device)
+        x = self.queryfilm(x, qf)  
+        x = self.decoder(x)
+        return x.view(B, len(queries))
 
 
 class ExplicitDecoder(nn.Module):
@@ -63,13 +94,13 @@ class ExplicitDecoder(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, encoder, decoder, c_in=1, n_frequencies=300, conditional=False, **kwargs):
+    def __init__(self, encoder, decoder, c_in=1, n_frequencies=300, conditional=False, len_conditional=None, **kwargs):
         super().__init__()
 
         self.encoder = get_resnet(hidden_channels=encoder.hidden_channels, pool=True)
         self.conditional = conditional
         if self.conditional is True:
-            self.film = Film(4, encoder.hidden_channels[-1])
+            self.film = Film(len_conditional, encoder.hidden_channels[-1])
         if decoder.name == "implicit_mlp":
             self.decoder = ImplicitDecoder(in_dim=encoder.hidden_channels[-1] + 1, out_dim=n_frequencies, hidden_channels_width=decoder.hidden_channels_width, 
                                             hidden_channels_depth=decoder.hidden_channels_depth)
@@ -77,6 +108,9 @@ class ResNet(nn.Module):
             self.decoder = ExplicitDecoder(in_dim=encoder.hidden_channels[-1], out_dim=n_frequencies, hidden_channels=decoder.hidden_channels)
         elif decoder.name == "fno":
             self.decoder = FNODecoder(in_dim=encoder.hidden_channels[-1], out_dim=n_frequencies, **decoder)
+        elif decoder.name == "film_implicit_mlp":
+            self.decoder = FilmDecoder(in_dim=encoder.hidden_channels[-1], out_dim=n_frequencies, hidden_channels_width=decoder.hidden_channels_width, 
+                                            hidden_channels_depth=decoder.hidden_channels_depth)
         else:
             raise NotImplementedError
 
@@ -89,16 +123,19 @@ class ResNet(nn.Module):
 
 
 class VIT(nn.Module):
-    def __init__(self, encoder, decoder, c_in=1, n_frequencies=300, conditional=False, **kwargs):
+    def __init__(self, encoder, decoder, c_in=1, n_frequencies=300, conditional=False, len_conditional=None, **kwargs):
         super().__init__()
 
         self.encoder = get_vit(encoder.hidden_dim_size, pool=True)
         self.conditional = conditional
 
         if self.conditional is True:
-            self.film = Film(4, encoder.hidden_dim_size)
+            self.film = Film(len_conditional, encoder.hidden_dim_size)
         if decoder.name == "implicit_mlp":
             self.decoder = ImplicitDecoder(in_dim=encoder.hidden_dim_size + 1, out_dim=n_frequencies, hidden_channels_width=decoder.hidden_channels_width, 
+                                            hidden_channels_depth=decoder.hidden_channels_depth)
+        elif decoder.name == "film_implicit_mlp":
+            self.decoder = FilmDecoder(in_dim=encoder.hidden_dim_size, out_dim=n_frequencies, hidden_channels_width=decoder.hidden_channels_width, 
                                             hidden_channels_depth=decoder.hidden_channels_depth)
         else:
             raise NotImplementedError
@@ -112,7 +149,7 @@ class VIT(nn.Module):
 
 
 class DeepONet(nn.Module):
-    def __init__(self, encoder=[40, 40], decoder=[128, 128, 128, 512], image_size=81*121, n_frequencies=300, conditional=False, **kwargs):
+    def __init__(self, encoder=[40, 40], decoder=[128, 128, 128, 512], image_size=81*121, n_frequencies=300, conditional=False, len_conditional=None, **kwargs):
         super().__init__()
         import deepxde as dde
         torch.set_default_tensor_type('torch.FloatTensor')
@@ -124,7 +161,7 @@ class DeepONet(nn.Module):
                 self.conditional = conditional
                 self.encoder = get_resnet(hidden_channels=encoder.hidden_channels, pool=True)     
                 if self.conditional is True:
-                    self.film = Film(4, encoder.hidden_channels[-1])
+                    self.film = Film(len_conditional, encoder.hidden_channels[-1])
 
             def forward(self, x):
                 if self.conditional is True:
@@ -163,6 +200,8 @@ def model_factory(model_name, **kwargs):
         return UNet(**kwargs)
     if model_name == "QueryUNet":
         return QueryUNet(**kwargs)
+    if model_name == "LocalNet":
+        return LocalNet(**kwargs)
     if model_name == "FNO":
         return FNO(**kwargs)
 

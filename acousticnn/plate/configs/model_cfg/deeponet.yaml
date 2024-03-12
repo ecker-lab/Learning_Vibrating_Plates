@@ -1,5 +1,6 @@
 model_name: "DeepONet"
 field_solution_map: False
+lr: 0.001
 
 encoder: {
 name: "ResNet",

@@ -1,5 +1,6 @@
 model_name: "ResNet"
 field_solution_map: False
+lr: 0.001
 
 encoder: {
 name: "resnet18",

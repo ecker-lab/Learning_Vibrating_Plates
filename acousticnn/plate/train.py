@@ -19,7 +19,8 @@ def train(args, config, net, dataloader, optimizer, valloader, scheduler, logger
             image, output, condition = image.to(args.device), output.to(args.device), condition.to(args.device)
             with torch.cuda.amp.autocast(enabled=args.fp16):
                 prediction = net(image, condition)
-                loss = torch.nn.functional.mse_loss(prediction, output)
+                #loss = torch.nn.functional.mse_loss(prediction, output)
+                loss = torch.nn.functional.l1_loss(prediction, output)
             losses.append(loss.detach().cpu().item())
             scaler.scale(loss.mean()).backward()
             if config.gradient_clip is not None:
@@ -31,7 +32,7 @@ def train(args, config, net, dataloader, optimizer, valloader, scheduler, logger
 
         print_log(f"Epoch {epoch} training loss = {(np.mean(losses)):4.4}", logger=logger)
         if logger is not None:
-            wandb.log({'Loss / Training': np.mean(losses), 'LR': optimizer.param_groups[0]['lr'], 'Epoch': epoch})
+            wandb.log({'Loss Freq / Training': np.mean(losses), 'LR': optimizer.param_groups[0]['lr'], 'Epoch': epoch})
 
         if epoch % config.validation_frequency == 0 or epoch % int(config.epochs/10) == 0:
             save_model(args.dir, epoch, net, optimizer, loss, "checkpoint_last")
@@ -67,7 +68,8 @@ def _generate_preds(args, config, net, dataloader):
     return torch.vstack(predictions), torch.vstack(outputs)
 
 
-def _evaluate(prediction, output, logger, config, args, epoch, report_peak_error, report_wasserstein, dataloader, verbose=True):
+def _evaluate(prediction, output, logger, config, args, epoch, report_peak_error, report_wasserstein, dataloader, verbose=True, field_losses=None):
+    REPORT_L1_LOSS = True
     results = {}
     losses_per_f = torch.nn.functional.mse_loss(prediction, output, reduction="none")
     prediction, output, losses_per_f = prediction.numpy(), output.numpy(), losses_per_f.numpy()
@@ -77,13 +79,15 @@ def _evaluate(prediction, output, logger, config, args, epoch, report_peak_error
     if report_peak_error is True:
         results_peak = peak_frequency_error(output, prediction)
         ad, fd = np.nanmean(results_peak["amplitude_distance"]), np.nanmean(results_peak["frequency_distance"])
-        n_peak = np.nanmean(results_peak["n_peaks"])
-        r25, r75 = np.nanquantile(results_peak["peak_ratio"], 0.25), np.nanquantile(results_peak["peak_ratio"], 0.75)
-        results.update({"peak_ratio": results_peak["peak_ratio"], "amplitude_distance": ad, "frequency_distance": fd, "n_peaks": n_peak, "r25": r25, "r75": r75})
+        save_rmean = 1 - np.nanmean(results_peak["save_peak_ratio"])
+        results.update({"peak_ratio": results_peak["peak_ratio"], "amplitude_distance": ad, "frequency_distance": fd, "save_rmean": save_rmean})
     if report_wasserstein is True:
         wasserstein = compute_wasserstein_distance(output, prediction, mean, std)
         results.update({"wasserstein": wasserstein})
-
+    if field_losses is not None:
+        results.update(field_losses) 
+    if REPORT_L1_LOSS is True:
+        results.update({"L1 Loss / (test/val)": np.mean(np.abs(prediction - output))})
     for key in results.keys():
         if key == "losses_per_f" or key == "peak_ratio":
             continue
@@ -115,7 +119,7 @@ def save_model(savepath, epoch, model, optimizer, loss, name="checkpoint_best"):
     torch.save({
                'epoch': epoch,
                'model_state_dict': model.state_dict(),
-               #'optimizer_state_dict': optimizer.state_dict(),
+               'optimizer_state_dict': optimizer.state_dict(),
                'loss': loss
                },
                os.path.join(savepath, name))

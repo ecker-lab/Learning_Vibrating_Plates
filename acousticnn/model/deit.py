@@ -9,22 +9,22 @@ class CustomViT(nn.Module):
     def __init__(self, config, pool):
         super(CustomViT, self).__init__()
         self.pool = pool
-        self.resizer = transforms.Resize((128, 128))
+        self.resizer = transforms.Resize((96, 128))
 
         self.vit = ViTModel(config)
         self.avgpool = nn.AdaptiveAvgPool1d(1)
-
-    def forward(self, x):
-        x = self.resizer(x)
-        x = self.vit(x).last_hidden_state
+        self.linear = nn.Linear(96*128, 192)
+    def forward(self, x_0):
+        x_0 = self.resizer(x_0)
+        x = self.vit(x_0).last_hidden_state
         if self.pool:
-            x = self.avgpool(x.permute(0, 2, 1))
+            x = self.avgpool(x.permute(0, 2, 1)) + self.linear(x_0.view(-1, 96*128)).unsqueeze(-1)
         return x
 
 
 def get_vit(hidden_dim_size, pool=True):
     config = ViTConfig()
-    config.image_size = 128
+    config.image_size = (96, 128)
     config.layer_norm_eps = 1e-12
     config.model_type = "vit"
     config.num_attention_heads = 3

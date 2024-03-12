@@ -22,7 +22,7 @@ def main():
     trainloader, valloader, testloader, trainset, valset, testset = get_dataloader(args, config, logger, shuffle=False)
     net = AutoEncoder().cuda()
     image = next(iter(trainloader))["bead_patterns"]
-    image = nn.functional.interpolate(image, img_shape) / 255
+    image = nn.functional.interpolate(image, img_shape) /image.max()
     print_log(summary(net, input_data=(image.to(args.device))), logger=logger)
     args.epochs = 300
     optimizer, scheduler = build_opti_sche(net, config)
@@ -31,8 +31,6 @@ def main():
     print_log("pixel_space result", logger=logger)
     reference, queries = generate_encoding(trainloader, net, use_net=False), generate_encoding(valloader, net, use_net=False)
     net = train_autoencoder(args, net, trainloader, valloader, optimizer, scheduler, logger)
-
-
 
 
     output = get_output(valset, config)
@@ -44,9 +42,8 @@ def main():
     print_log(k_opt, logger=logger)
     prediction = pred_fn(k_opt, trainset, trainloader, valloader, net, config, use_net=False)
     results = _evaluate(prediction, output, logger=None, config=None, args=None, epoch=None, report_peak_error=True, report_wasserstein=True, dataloader=valloader)
-    r25, r75 = np.nanquantile(results["peak_ratio"], 0.25), np.nanquantile(results["peak_ratio"], 0.75)
-    a,b,c = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"]
-    print_log(f"{a:4.2f} & {b:4.2f} & [{r25:3.2f}, {r75:3.2f}] & {c:3.1f}", logger=logger)
+    a, b, c, save_rmean = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"], results["save_rmean"]
+    print_log(f"{a:4.2f} & {b:4.2f} & {save_rmean:3.2f} & {c:3.1f}", logger=logger)
 
 
     print_log("\nautoencoder_result", logger=logger)
@@ -57,9 +54,8 @@ def main():
     print_log(k_opt, logger=logger)
     prediction = pred_fn(k_opt, trainset, trainloader, valloader, net, config, use_net=True)
     results = _evaluate(prediction, output, logger=None, config=None, args=None, epoch=None, report_peak_error=True, report_wasserstein=True, dataloader=valloader)
-    r25, r75 = np.nanquantile(results["peak_ratio"], 0.25), np.nanquantile(results["peak_ratio"], 0.75)
-    a,b,c = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"]
-    print_log(f"{a:4.2f} & {b:4.2f} & [{r25:3.2f}, {r75:3.2f}] & {c:3.1f}", logger=logger)
+    a, b, c, save_rmean = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"], results["save_rmean"]
+    print_log(f"{a:4.2f} & {b:4.2f} & {save_rmean:3.2f} & {c:3.1f}", logger=logger)
 
 
 
@@ -69,9 +65,8 @@ def main():
     reference, queries = generate_encoding(trainloader, net), generate_encoding(testloader, net)
     prediction = pred_fn(k_opt, trainset, trainloader, testloader, net, config, use_net=True)
     results = _evaluate(prediction, output, logger=None, config=None, args=None, epoch=None, report_peak_error=True, report_wasserstein=True, dataloader=testloader)
-    r25, r75 = np.nanquantile(results["peak_ratio"], 0.25), np.nanquantile(results["peak_ratio"], 0.75)
-    a,b,c = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"]
-    print_log(f"{a:4.2f} & {b:4.2f} & [{r25:3.2f}, {r75:3.2f}] & {c:3.1f}", logger=logger)
+    a, b, c, save_rmean = results["loss (test/val)"], results["wasserstein"], results["frequency_distance"], results["save_rmean"]
+    print_log(f"{a:4.2f} & {b:4.2f} & {save_rmean:3.2f} & {c:3.1f}", logger=logger)
 
 
 if __name__ == '__main__':

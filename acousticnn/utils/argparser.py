@@ -2,21 +2,24 @@ import argparse
 import munch
 import yaml
 import os
-
+from acousticnn.plate.configs.main_dir import main_dir
 
 def get_args(string_args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default="config.yaml", type=str, help='path to config file')
     parser.add_argument('--model_cfg', default="query_rn18.yaml", type=str, help='path to config file')
     parser.add_argument('--dir', default="debug", type=str, help='save directory')
-    parser.add_argument('--epochs', default="100", type=int, help='training epochs')
     parser.add_argument('--device', default="cuda", type=str, help='choose cuda or cpu')
     parser.add_argument('--fp16', default="True", type=bool, help='use gradscaling')
     parser.add_argument('--seed', default="0", type=int, help='seed')
+    parser.add_argument('--add_noise', action='store_true', help='add noise to beading pattern images during training')
+    parser.add_argument('--alpha', default="0.9", type=float, help='alpha for loss weighting')
 
     parser.add_argument('--batch_size', default="64", type=int, help='batch_size')
     parser.add_argument('--wildcard', type=int, help='do anything with this argument')
     parser.add_argument('--ablation_cfg', default="None", type=str, help='specify ablation definition')
+    parser.add_argument('--debug', action='store_true', help='debug mode')
+    parser.add_argument('--continue_training', action='store_true', help='continue training from checkpoint')
 
     #'experiment args'
     if string_args is None:
@@ -24,11 +27,11 @@ def get_args(string_args=None):
     else:
         args = parser.parse_args(string_args)
 
-    args.config = os.path.join("configs", args.config)
-    args.model_cfg = os.path.join("configs/model_cfg/", args.model_cfg)
-    args.ablation_cfg = os.path.join("configs/ablation_cfg/", args.ablation_cfg)
+    args.config = os.path.join(main_dir, "configs", args.config)
+    args.model_cfg = os.path.join(main_dir, "configs/model_cfg/", args.model_cfg)
+    args.ablation_cfg = os.path.join(main_dir, "configs/ablation_cfg/", args.ablation_cfg)
     args.dir_name = args.dir
-    args.dir = os.path.join("experiments", args.dir)
+    args.dir = os.path.join(main_dir, "experiments", args.dir)
 
     return args
 
