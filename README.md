@@ -63,6 +63,22 @@ python scripts/generate_videos.py --ckpt path/to/trained_model --model_cfg local
 Change the model_cfg and config args to specify the model and dataset respectively and specify the path to a trained model checkpoint via --ckpt. 
 --save_path specifies where the resulting videos are saved.
 
+## Example Results
+
+The videos show example predictions for samples from the test set. For the first video for each dataset changes in magnitude are not displayed, which makes the changes more easily visible. For the second video for each dataset changes in magnitude are displayed, which means that many details are lost but the resonance frequencies can be seen. 
+
+### V5000 Dataset
+
+https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/5fa13da1-0583-4f49-aafe-f0382637f9dd
+
+https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/baa9c323-5637-47a3-8d6d-5fe297993e73
+
+### G5000 Dataset
+
+https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/f575bcfd-d457-44ea-88b7-1a8f286bf78b
+
+https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/85c2f931-e5be-4d80-9274-ae5e86aa7037
+
 
 ## Acknowledgments
 
