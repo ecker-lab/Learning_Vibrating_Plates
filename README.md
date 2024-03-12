@@ -10,6 +10,10 @@ We are in the process of updating this repository.
 
 The data is available from: https://doi.org/10.25625/UWF7RB
 
+
+https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/2ea7cfe0-646d-49eb-81a4-fa823fb821b8
+
+
 The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
 
