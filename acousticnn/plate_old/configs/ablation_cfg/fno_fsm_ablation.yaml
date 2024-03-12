@@ -1,6 +1,0 @@
-name: "ablation_fno_fsm"
-args: {
-  hidden_channels: [128, 64],
-  n_modes: [16, 32, 64],
-  n_layers: [4, 5, 6],
-  }
