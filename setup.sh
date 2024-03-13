@@ -6,7 +6,7 @@ pip install munch==4.0 torchinfo==1.8 matplotlib==3.7 ipykernel==6.25 jupyter==1
 # to run fno and deeponet
 pip install deepxde==1.10 neuraloperator==0.2 tensorly==0.8 tensorly-torch==0.4 opt_einsum==3.3 zarr==2.16
 
-pip install h5py==3.10 hdf5plugin==4.2
+pip install h5py==3.10 hdf5plugin==4.2 seaborn=0.13 imageio=2.32
 pip install -e .
 
 python -m ipykernel install --user --name=acoustics
