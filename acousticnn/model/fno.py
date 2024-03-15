@@ -41,13 +41,13 @@ class FNO(nn.Module):
         self.film = film
         if self.film is True and self.conditional is True:
             self.fno1 = FNOConditionalBlock(n_modes=[n_modes, n_modes], in_channels=1 + 2, hidden_channels=hidden_channels,
-                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional, len_conditional=len_conditional)
+                                            out_channels=c_out, n_layers=n_layers, conditional=conditional, len_conditional=len_conditional)
         elif self.conditional is True:
             in_channels = 3 + self.conditional * len_conditional
-            self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=4)
+            self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=n_layers)
         else:
             in_channels = 3 
-            self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=4)
+            self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=n_layers)
 
     @staticmethod
     def add_positional_encoding(tensor):
@@ -84,7 +84,7 @@ class FNODecoder(nn.Module):
             self.decoder = FNOBlock(n_modes=[n_modes], in_channels=2, hidden_channels=hidden_channels, n_layers=n_layers)
         else:
             self.decoder = FNOConditionalBlock(n_modes=[n_modes, n_modes], in_channels=1 + 2, hidden_channels=hidden_channels,
-                                            out_channels=c_out, n_layers=n_layers*2, conditional=conditional, len_conditional=None)
+                                            out_channels=c_out, n_layers=n_layers, conditional=conditional, len_conditional=None)
     @staticmethod
     def add_positional_encoding(tensor):
         B, d = tensor.shape
