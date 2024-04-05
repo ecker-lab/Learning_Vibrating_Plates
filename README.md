@@ -5,8 +5,7 @@ In mechanical structures like airplanes, cars and houses, noise is generated and
 
 ## Data
 
-The data is available from: https://doi.org/10.25625/UWF7RB
-
+We provide a notebook [here](notebooks/view_dataset.ipynb), that enables the quick and easy visualization of our dataset. The data is available from [this data repository](https://doi.org/10.25625/UWF7RB) in the hdf5 format. There, we also provide information on the structure of the hdf5 files and how to access the data.
 
 https://github.com/ecker-lab/Learning_Vibrating_Plates/assets/64748695/2ea7cfe0-646d-49eb-81a4-fa823fb821b8
 
@@ -19,9 +18,6 @@ The video shows how the vibration patterns change for three example plates with 
 | small example file   | ```python acousticnn/utils/download.py --dataset_name single_example_G5000 --root_folder data/example``` | 2 GB        |
 | V5000   | ```python acousticnn/utils/download.py --dataset_name V5000 --root_folder data/V5000``` | 13 GB        |
 | G5000   | ```python acousticnn/utils/download.py --dataset_name G5000 --root_folder data/G5000``` | 13 GB        |
-
-
-notebooks/view_dataset.ipynb gives an example how to open the files saved in the hdf5 format and visualize the samples.
 
 
 ## Setup
