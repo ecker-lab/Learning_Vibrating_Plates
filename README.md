@@ -51,8 +51,8 @@ To generate prediction videos:
 
 ``
 python scripts/generate_videos.py --ckpt path/to/trained_model --model_cfg localnet.yaml --config V5000.yaml --save_path plots/videos
-
 ``
+
 Change the model_cfg and config args to specify the model and dataset respectively and specify the path to a trained model checkpoint via --ckpt. 
 --save_path specifies where the resulting videos are saved.
 
