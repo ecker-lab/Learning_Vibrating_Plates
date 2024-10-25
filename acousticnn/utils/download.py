@@ -11,29 +11,35 @@ BASE_PATH = "https://data.goettingen-research-online.de/api/access/datafile/:per
 
 class G5000:
     files = [
-        ["MO6YQA", "G5000_1000_test_lower_res.h5"],
-        ["8HYU4R", "G5000_2000_lower_res.h5"],
-        ["WMBPDM", "G5000_3000_lower_res.h5"],
+        ["TODO", "G5000_BCFP_1000_test.h5"],
+        ["TODO", "G5000_BCFP_2000_train.h5"],
+        ["TODO", "G5000_BCFP_3000_train.h5"],
     ]
 
 class V5000:
     files = [
-        ["R0VRMC", "V5000_3000_lower_res.h5"],
-        ["QMJVUL", "V5000_1000__test_lower_res.h5"],
-        ["WDNFHM", "V5000_2000_lower_res.h5"]
+        ["TODO", "V5000_1000_test.h5"],
+        ["TODO", "V5000_2000_train.h5"],
+        ["TODO", "V5000_3000_train.h5"]
     ]
 
 class single_example_G5000:
-    files = [["MO6YQA", "G5000_1000_test_lower_res.h5"]]
+    files = [["TODO", "G5000_BCFP_1000_test.h5"]]
+
+class V50k:
+    files = [
+        ["TODO", "V50000_15f.h5"]
+    ]
 
 
 def get_ids(name):
     datasets = {
         "G5000": G5000,
         "V5000": V5000,
-        "single_example_G5000": single_example_G5000
+        "single_example_G5000": single_example_G5000,
+        'V50k': V50k
     }
-    
+
     dataset = datasets.get(name)
     if dataset is not None:
         return dataset.files
@@ -42,12 +48,12 @@ def get_ids(name):
 
 
 def download_data(root_folder, dataset_name):
-    """ 
+    """
     Download data splits specific to a given setting.
 
     Args:
     root_folder: The root folder where the data will be downloaded
-    dataset_name: The name of the dataset to download, one of: G5000, V5000 or single_example_G5000  
+    dataset_name: The name of the dataset to download, one of: G5000, V5000 or single_example_G5000
     """
 
     print(f"Downloading data for {dataset_name} ...")

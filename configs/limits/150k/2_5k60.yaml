@@ -1,0 +1,16 @@
+# default_args is used to include configs from the _modular folder into this config. This ensures a modular way of combining different config files.
+# Individual entries of the loaded default args can be changed by simply redefining them
+default_args: [
+               "configs/_modular/optimizer.yaml",
+               "configs/_modular/scheduler.yaml",
+               "configs/_modular/V5000_limits.yaml"
+               ]
+
+
+# how long does the training take
+validation_frequency: 5
+epochs : 500
+
+freq_sample: False
+freq_limit: 60
+n_train_samples: 2500

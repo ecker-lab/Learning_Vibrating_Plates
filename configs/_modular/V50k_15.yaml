@@ -1,0 +1,22 @@
+data_path_ref: "vibrating_plates_data/V5000_2000_train.h5"
+data_path_train: ['frequency_sampling/V50000_15f.h5']
+data_path_val: ["vibrating_plates_data/V5000_2000_train.h5"]
+
+data_paths_test: ["vibrating_plates_data/V5000_1000_test.h5"]
+
+dataset_keys: ["bead_patterns", "z_vel_abs", "z_vel_mean_sq", "phy_para", "frequencies"]
+
+# what are additional parameters of the dataset?
+conditional: False
+filter_dataset: False
+mean_conditional_param: [0.75, 0.5, 0.003, 0.02]
+std_conditional_param: [0.086602546, 0.05773503, 0.0005773503, 0.005773503]
+
+
+# how to subset and treat dataset
+random_split: False
+n_samples: 50000
+n_freqs: 15
+n_val_samples: 100
+max_frequency: 250
+filter_dataset: False

@@ -1,0 +1,16 @@
+# default_args is used to include configs from the _modular folder into this config. This ensures a modular way of combining different config files.
+# Individual entries of the loaded default args can be changed by simply redefining them
+default_args: [
+               "configs/_modular/optimizer.yaml",
+               "configs/_modular/scheduler.yaml",
+               'configs/_modular/V5000.yaml',
+               ]
+
+
+filter_dataset: True
+filter_orientation: "larger"
+filter_type: "bead_ratio"
+epochs : 500
+
+freq_sample: True
+freq_limit: 50

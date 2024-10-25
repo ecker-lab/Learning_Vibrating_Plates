@@ -1,10 +1,7 @@
 # folders
 /data
-*/experiments
-*/*/experiments
 /tmp
 /results
-/experiments
 *plots
 *.pyc
 sandbox
@@ -20,4 +17,3 @@ dist/
 *.html
 
 wandb/
-*/main_dir.py

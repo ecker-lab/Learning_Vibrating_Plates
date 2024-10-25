@@ -1,7 +1,0 @@
-model_name: "UNet"
-field_solution_map: True
-lr: 0.0005
-
-scaling_factor: 64
-
-dataset_keys: ["bead_patterns", "z_abs_velocity", "z_vel_mean_sq", "sample_mat"]

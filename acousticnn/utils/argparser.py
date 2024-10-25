@@ -2,7 +2,8 @@ import argparse
 import munch
 import yaml
 import os
-from acousticnn.plate.configs.main_dir import main_dir
+from acousticnn.main_dir import main_dir, experiment_dir
+import time
 
 def get_args(string_args=None):
     parser = argparse.ArgumentParser()
@@ -10,7 +11,9 @@ def get_args(string_args=None):
     parser.add_argument('--model_cfg', default="query_rn18.yaml", type=str, help='path to config file')
     parser.add_argument('--dir', default="debug", type=str, help='save directory')
     parser.add_argument('--device', default="cuda", type=str, help='choose cuda or cpu')
-    parser.add_argument('--fp16', default="True", type=bool, help='use gradscaling')
+    parser.add_argument('--fp16', choices=[True, False], type=lambda x: x == 'True', default=True, help='use gradscaling (True/False)')
+    parser.add_argument('--compile', choices=[True, False], type=lambda x: x == 'True', default=True, help='compile network (True/False)')
+    parser.add_argument('--filter_dataset', choices=['smaller', 'larger', 'False'], type=str, default='False', help='filter dataset for transfer experiment')
     parser.add_argument('--seed', default="0", type=int, help='seed')
     parser.add_argument('--add_noise', action='store_true', help='add noise to beading pattern images during training')
     parser.add_argument('--alpha', default="0.9", type=float, help='alpha for loss weighting')
@@ -19,6 +22,7 @@ def get_args(string_args=None):
     parser.add_argument('--wildcard', type=int, help='do anything with this argument')
     parser.add_argument('--ablation_cfg', default="None", type=str, help='specify ablation definition')
     parser.add_argument('--debug', action='store_true', help='debug mode')
+    parser.add_argument('--load_idx', action='store_true', help='debug mode')
     parser.add_argument('--continue_training', action='store_true', help='continue training from checkpoint')
 
     #'experiment args'
@@ -29,9 +33,9 @@ def get_args(string_args=None):
 
     args.config = os.path.join(main_dir, "configs", args.config)
     args.model_cfg = os.path.join(main_dir, "configs/model_cfg/", args.model_cfg)
-    args.ablation_cfg = os.path.join(main_dir, "configs/ablation_cfg/", args.ablation_cfg)
     args.dir_name = args.dir
-    args.dir = os.path.join(main_dir, "experiments", args.dir)
+    args.original_dir = os.path.join(experiment_dir, args.dir)
+    args.dir = os.path.join(experiment_dir, args.dir, time.strftime('%Y%m%d_%H%M%S', time.localtime()))
 
     return args
 
@@ -41,14 +45,6 @@ def load_yaml_file(filepath):
         return yaml.safe_load(file)
 
 
-def modify_default_cfg(default_config, main_cfg):
-    for key, value in main_cfg.items():
-        if isinstance(value, dict) and key in default_config and isinstance(default_config[key], dict):
-            modify_default_cfg(default_config[key], value)
-        else:
-            default_config[key] = value
-
-            
 def get_config(config_path):
     # Get the main configuration file
     main_cfg = load_yaml_file(config_path)
@@ -60,21 +56,11 @@ def get_config(config_path):
         # Load the configuration from the default argument files
         for path in default_args:
             default_config = load_yaml_file(path)
-            
-            # Modify content of default args if specified so in main configuration and then update main configuration with modified default configuration
+
+            # Modify content of default config if different entry in main config and then update main config with modified default config
             for key in main_cfg:
                 if key in default_config:
-                    modify_default_cfg(default_config[key], main_cfg[key])
-            
+                    default_config[key] = main_cfg[key]
+
             main_cfg.update(default_config)
     return munch.Munch.fromDict(main_cfg)
-
-
-def update_config(config, default_args):
-    for key, val in default_args.items():
-        sub_keys = key.split('.')
-        sub_config = config
-        for sub_key in sub_keys[:-1]:
-            sub_config = sub_config[sub_key]
-        sub_config[sub_keys[-1]] = val
-    return config

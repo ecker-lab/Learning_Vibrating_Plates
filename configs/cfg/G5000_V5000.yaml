@@ -1,0 +1,16 @@
+# default_args is used to include configs from the _modular folder into this config. This ensures a modular way of combining different config files.
+# Individual entries of the loaded default args can be changed by simply redefining them
+default_args: [
+               "configs/_modular/optimizer.yaml",
+               "configs/_modular/scheduler.yaml",
+               'configs/_modular/G5000.yaml',
+               ]
+
+#initial_checkpoint: /home/nimdelde/scratch/experiments/whisperplate/vibrating_plates/V5000/fqo_unet/20240731_134309/checkpoint_best
+validation_frequency: 5
+epochs : 500
+
+freq_sample: True
+freq_limit: 50
+
+use_both_datasets: True

@@ -1,0 +1,7 @@
+scheduler: {
+  type: CosLR,
+  kwargs: {
+    epochs: 500,
+    initial_epochs: 50,
+    lr_min: 0.00001
+}}

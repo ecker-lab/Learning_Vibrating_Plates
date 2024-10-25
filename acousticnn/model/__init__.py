@@ -1,6 +1,7 @@
-from .resnet import ResNet18, ResNet50, get_resnet, ResNet
-from .encoding import PositionalEncoding
-from .vit import get_vit
+from .resnet import ResNet
+from .vit import VIT
+from .fno import FNO
 from .conditioning import Film
 from .unet import UNet, LocalNet
-from .fno import FNO, FNODecoder
+from .fno import FNO
+from .model import model_factory

@@ -1,9 +1,8 @@
-import torch
-
 from torch import nn
 from transformers import ViTConfig, ViTModel
 from torchvision import transforms
-
+from .conditioning import Film
+from .modules import FilmDecoder
 
 class CustomViT(nn.Module):
     def __init__(self, config, pool):
@@ -38,3 +37,23 @@ def get_vit(hidden_dim_size, pool=True):
     config.num_channels = 1
     model = CustomViT(config, pool)
     return model
+
+
+class VIT(nn.Module):
+    def __init__(self, encoder, decoder, c_in=1, n_frequencies=300, conditional=False, len_conditional=None, **kwargs):
+        super().__init__()
+
+        self.encoder = get_vit(encoder.hidden_dim_size, pool=True)
+        self.conditional = conditional
+
+        if self.conditional is True:
+            self.film = Film(len_conditional, encoder.hidden_dim_size)
+        self.decoder = FilmDecoder(in_dim=encoder.hidden_dim_size, out_dim=n_frequencies, hidden_channels_width=decoder.hidden_channels_width,
+                                        hidden_channels_depth=decoder.hidden_channels_depth)
+
+    def forward(self, x, conditional=None, frequencies=None):
+        x = self.encoder(x)
+        if self.conditional is True:
+            x = self.film(x, conditional)
+        x = self.decoder(x)
+        return x

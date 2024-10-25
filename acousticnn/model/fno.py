@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-from acousticnn.model import Film
+from .conditioning import Film
 from neuralop.models import TFNO
 from neuralop.models import FNO as FNOBlock
 
@@ -46,7 +46,7 @@ class FNO(nn.Module):
             in_channels = 3 + self.conditional * len_conditional
             self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=n_layers)
         else:
-            in_channels = 3 
+            in_channels = 3
             self.fno1 = FNOBlock(n_modes=[n_modes, n_modes], in_channels=in_channels, hidden_channels=hidden_channels, out_channels=c_out, n_layers=n_layers)
 
     @staticmethod
@@ -57,7 +57,7 @@ class FNO(nn.Module):
         tensor_with_pos_encoding = torch.cat((tensor, positional_encoding_x, positional_encoding_y), dim=1)
         return tensor_with_pos_encoding
 
-    def forward(self, x, conditional=None):
+    def forward(self, x, conditional=None, frequencies=None):
         x = F.interpolate(x, (40, 60))
 
         if self.conditional is True and self.film is False:
@@ -69,7 +69,6 @@ class FNO(nn.Module):
         else:
             x = self.fno1(x)
         return x
-
 
 
 class FNODecoder(nn.Module):
@@ -93,15 +92,14 @@ class FNODecoder(nn.Module):
         tensor_with_pos_encoding = torch.cat((tensor.unsqueeze(-1), positional_encoding), dim=-1)
         return tensor_with_pos_encoding
 
-    def forward(self, x, conditional=None):
+    def forward(self, x, conditional=None, frequencies=None):
         B = x.shape[0]
         x = x.reshape(B, -1)
         x = self.linear(x)
         x = self.add_positional_encoding(x)
         if self.conditional is True:
-            x = sself.decoder(x.transpose(1, 2), conditional)
+            x = self.decoder(x.transpose(1, 2), conditional)
         else:
             x = self.decoder(x.transpose(1, 2))
 
         return x.view(B, self.out_dim)
-

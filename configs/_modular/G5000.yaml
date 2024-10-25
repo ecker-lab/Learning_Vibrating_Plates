@@ -1,0 +1,23 @@
+data_path_train: [
+            "vibrating_plates_data/G5000_BCFP_3000_train.h5",
+            "vibrating_plates_data/G5000_BCFP_2000_train.h5",
+            ]
+data_path_ref: "vibrating_plates_data/G5000_BCFP_2000_train.h5"
+data_paths_test: ["vibrating_plates_data/G5000_BCFP_1000_test.h5"]
+
+dataset_keys: ["bead_patterns", "z_vel_abs", "z_vel_mean_sq", "phy_para", "frequencies"]
+conditional: True
+
+mean_conditional_param: [0.75, 0.5, 0.003, 0.02, 50, 0.5, 0.5]
+std_conditional_param: [0.086602546, 0.05773503, 0.0005773503, 0.005773503, 28.86751345948129, 0.17320508075688776,  0.17320508075688776]
+
+
+
+# how to subset and treat dataset
+n_samples: 5000
+random_split: True
+n_val_samples: 500
+n_train_samples: 4500
+max_frequency: 250
+n_freqs: 300
+filter_dataset: False

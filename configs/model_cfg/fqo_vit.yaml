@@ -1,0 +1,16 @@
+model_name: "vit"
+velocity_field: False
+lr: 0.0005
+
+encoder: {
+  name: "vit",
+  hidden_dim_size: 192}
+
+
+decoder: {
+  name: "film_implicit_mlp",
+  hidden_channels_width: [512],
+  hidden_channels_depth: 6
+}
+
+dataset_keys: ["bead_patterns", "z_vel_mean_sq", "phy_para", "frequencies"]

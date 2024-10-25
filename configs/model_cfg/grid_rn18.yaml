@@ -1,0 +1,15 @@
+model_name: "ResNet"
+velocity_field: False
+lr: 0.001
+
+encoder: {
+name: "resnet18",
+hidden_channels: [64, 128, 256, 512]
+}
+
+decoder: {
+name: "explicit_mlp",
+hidden_channels: [512,512, 512, 512, 512, 512]
+}
+
+dataset_keys: ["bead_patterns", "z_vel_mean_sq", "phy_para", "frequencies"]

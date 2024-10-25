@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-from acousticnn.model import Film
+from .conditioning import Film
 QUERYFILM = True
 
 
@@ -106,7 +106,7 @@ class UNet(nn.Module):
         self.up3 = Up(5*k, 2*k)
         self.outc = nn.Conv2d(2*k, c_out, kernel_size=1)
 
-    def forward(self, x, conditional=None):
+    def forward(self, x, conditional=None, frequencies=None):
         B = x.shape[0]
         x = torch.nn.functional.interpolate(x, size=(96, 128), mode='bilinear', align_corners=True)
         x = self.inc(x)
@@ -152,11 +152,8 @@ class LocalNet(nn.Module):
         self.bot1 = DoubleConv(4*k, 4*k)
         self.bot3 = DoubleConv(4*k, 4*k)
         self.global_avg_pool = nn.AdaptiveAvgPool2d(1)
-        if QUERYFILM is True:
-            self.queryfilm = Film(1, 8*k)
-            self.up1 = Up(12*k, 4*k)
-        else:
-            self.up1 = Up(12*k + 1, 4*k)
+        self.queryfilm = Film(1, 8*k)
+        self.up1 = Up(12*k, 4*k)
         self.sa4 = SelfAttention(4*k)
         self.up2 = Up(6*k, 4*k)
         self.up3 = Up(5*k, 2*k)
@@ -164,20 +161,15 @@ class LocalNet(nn.Module):
         self.freq_batches = freq_batches
         self.freq_steps = int(n_frequencies / freq_batches)
         self.out_dim = n_frequencies
-        self.query_frequencies = (torch.arange(0, self.freq_steps) / 59 * 2) - 1 # 60 freq steps for 300 freqs
-        self.query_frequencies = self.query_frequencies.cuda()
-        if rmfreqs is True:
-            self.query_frequencies = torch.cat((self.query_frequencies[:int(50/freq_batches)], self.query_frequencies[int(100/freq_batches):]), dim=0)
-            self.freq_steps = len(self.query_frequencies)
 
-    def forward(self, x, conditional=None):
-        B = x.shape[0]
+    def forward_encoder(self, x, conditional):
         x = torch.nn.functional.interpolate(x, size=(96, 128), mode='bilinear', align_corners=True)
         x = self.inc(x)
         x1 = self.down0(x)
 
         x2 = self.down1(x1)
         x3 = self.down2(x2)
+
         x3 = self.sa2(x3)
         if self.conditional is True:
             x3 = self.film(x3, conditional)
@@ -185,21 +177,20 @@ class LocalNet(nn.Module):
         x4 = self.sa3(x4)
         x4 = self.bot1(x4)
         x4 = self.bot3(x4)
-        gap = self.global_avg_pool(x4)
+        gap = self.global_avg_pool(x4)[:, :, 0, 0].unsqueeze(-1).unsqueeze(-1)
         x4 = torch.cat([x4, gap.repeat(1, 1, x4.size(2), x4.size(3))], dim=1)
+        return x1, x2, x3, x4
 
-        x4 = x4.repeat_interleave(len(self.query_frequencies), dim=0)
-        queries = self.query_frequencies
-        if QUERYFILM is True:
-            qf = queries.repeat(B).view(-1, 1).expand(B*self.freq_steps, 1)
-            x4 = self.queryfilm(x4, qf)  
-        else:
-            qf = queries.repeat(B).view(-1, 1, 1, 1).expand(B*self.freq_steps, 1, *x4.shape[2:])
-            x4 = torch.cat((x4, qf), dim=1)
-        x = self.up1(x4, x3.repeat_interleave(self.freq_steps, dim=0))
+    def forward(self, x, conditional=None, frequencies=None):
+        B, n_freqs = frequencies.shape
+        x1, x2, x3, x4 = self.forward_encoder(x, conditional)
+        x4 = x4.repeat_interleave(n_freqs, dim=0)
+
+        x4 = self.queryfilm(x4, frequencies.view(-1, 1))
+        x = self.up1(x4, x3.repeat_interleave(n_freqs, dim=0))
         x = self.sa4(x)
-        x = self.up2(x, x2.repeat_interleave(self.freq_steps, dim=0))
-        x = self.up3(x, x1.repeat_interleave(self.freq_steps, dim=0))
+        x = self.up2(x, x2.repeat_interleave(n_freqs, dim=0))
+        x = self.up3(x, x1.repeat_interleave(n_freqs, dim=0))
         output = self.outc(x)
         output = torch.nn.functional.interpolate(output, size=(40, 60), mode='bilinear', align_corners=True)
-        return output.reshape(B, self.freq_steps*self.freq_batches, *output.shape[2:])
+        return output.reshape(B, n_freqs, *output.shape[2:])

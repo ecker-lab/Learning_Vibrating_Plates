@@ -76,7 +76,7 @@ def plot_all_models(field_solution, frequency_response, field_prediction, predic
         axs[i, 2].plot(frequency_vector, frequency_response[idx], color="#909090", linestyle='dashed', label="Reference")
         axs[i, 2].axvline(x=frequency, color='red', linestyle='--', label='Selected frequency')
         axs[i, 2].legend(fontsize=10, loc="upper left")
-        axs[i, 2].grid(which="major") 
+        axs[i, 2].grid(which="major")
 
     plt.tight_layout()
     fig.canvas.draw()
@@ -87,30 +87,37 @@ def plot_one_model(field_solution, frequency_response, field_prediction, predict
     fig, axs = plt.subplots(1, 4, figsize=np.array(resolution)[::-1]/100)
     img = geometries[idx]
     frequency_vector = np.arange(1, field_solution.shape[1] + 1)
-    
+
     if scaling is True:
-        min_values, max_values = get_range(field_prediction.numpy(), field_solution.numpy())
+        min_values, max_values = get_range(field_prediction, field_solution)
         vmin, vmax = min_values[idx], max_values[idx]
         #print("do scaling")
     else:
         vmin, vmax = None, None
     axs[0].imshow(img, cmap=plt.cm.gray)
-    axs[0].set_title("Geometry")
+    axs[0].set_title("Geometry", fontsize=9)
     axs[0].axis("off")
     axs[1].imshow(field_solution[idx][frequency], vmin=vmin, vmax=vmax, cmap=plt.cm.gray)
-    axs[1].set_title("Actual velocity field")
+    axs[1].set_title("Actual velocity field", fontsize=9)
     axs[1].set_aspect("equal")
     axs[1].axis("off")
     axs[2].imshow(field_prediction[idx][frequency], vmin=vmin, vmax=vmax,cmap=plt.cm.gray)
-    axs[2].set_title(f"Predicted velocity field")
+    axs[2].set_title(f"Predicted velocity field", fontsize=9)
     axs[2].set_aspect("equal")
     axs[2].axis("off")
     axs[3].plot(frequency_vector, prediction[idx], color="#55a78c", lw=1.5, alpha = 0.8, label='Prediction')
     axs[3].plot(frequency_vector, frequency_response[idx], color="#909090", linestyle='dashed', label="Reference")
-    axs[3].set_title(f"Predicted frequency response")
+    axs[3].set_title(f"Predicted frequency response", fontsize=9)
     axs[3].axvline(x=frequency, color='red', linestyle='--', label='Selected frequency')
     axs[3].legend(fontsize=7, loc="upper left")
-    axs[3].grid(which="major") 
+    axs[3].set_ylim(-20, 80)
+    axs[3].set_aspect(1.9)
+
+    axs[3].set_yticks([-20, 0, 20, 40, 60, 80])
+    axs[3].set_xticks([0, 100, 200, 300])
+
+    sns.despine(trim=True, offset=7)
+    axs[3].grid(which="major", lw=0.2)
 
     plt.tight_layout()
     return fig
@@ -126,6 +133,7 @@ def get_one_plot_as_img(plot_args):
 
 
 def save_video(path, plot_args, max_freq, plot_fn, save_format=".mp4", resolution=None):
+    plt.rc('font', size=8)
     if resolution is None:
         d = 4
         h, w = 1, 3
@@ -159,11 +167,11 @@ def plot_frequency_response(ax, plot_args):
     ax.plot(actual_frequency_response[idx], lw=0.5, label="Reference", color="black", linestyle='dashed',)
     ax.plot(prediction[idx], lw=0.5, label="Prediction", color="#55a78c")
     ax.set_ylim(-20, 80)
-    ax.grid(lw=0.2) 
+    ax.grid(lw=0.2)
     ax.set_xlabel('Frequency', fontsize=5, labelpad=4)
     ax.set_xticks([0, 100, 200, 300])
     ax.set_ylabel('Amplitude', fontsize=5, labelpad=3)
-    sns.despine(ax=ax, offset=5) 
+    sns.despine(ax=ax, offset=5)
     ax.legend()
     return ax
 
@@ -180,17 +188,16 @@ def save_plot_at_peaks(path, plot_args, max_freq):
     axs[0,0] = plot_geometry(axs[0,0], plot_args)
     axs[1,0] = plot_frequency_response(axs[1,0], plot_args)
 
-
     from acousticnn.plate.metrics import find_peaks
     actual_peaks, properties = find_peaks(plot_args["frequency_response"][idx])
     actual_peaks_predicted, properties = find_peaks(plot_args["prediction"][idx])
-    actual_peaks = np.sort(actual_peaks[np.argsort(plot_args["frequency_response"][idx][actual_peaks]).flip(dims=[0])[:3]])
-    actual_peaks_predicted = np.sort(actual_peaks_predicted[np.argsort(plot_args["prediction"][idx][actual_peaks_predicted]).flip(dims=[0])[:3]])
+    actual_peaks = np.sort(actual_peaks[np.argsort(plot_args["frequency_response"][idx][actual_peaks])[-3:]])
+    actual_peaks_predicted = np.sort(actual_peaks_predicted[np.argsort(plot_args["prediction"][idx][actual_peaks_predicted])[-3:]])
 
     field_prediction = plot_args["field_prediction"]
     field_solution = plot_args["field_solution"]
     if plot_args["scaling"] is True:
-        min_values, max_values = get_range(field_prediction.numpy(), field_solution.numpy())
+        min_values, max_values = get_range(field_prediction, field_solution)
         vmin, vmax = min_values[idx], max_values[idx]
     else:
         vmin, vmax = None, None
@@ -202,14 +209,15 @@ def save_plot_at_peaks(path, plot_args, max_freq):
         ax2.imshow(field_prediction[idx][peak2], vmin=vmin, vmax=vmax, cmap=plt.cm.gray)
         ax2.set_title(f"Predicted velocity field for frequency {peak2}")
         ax2.axis("off")
-        return ax1, ax2	
+        return ax1, ax2
+
+
     for i in range(np.min([len(actual_peaks), len(actual_peaks_predicted)])):
         plot_fields(i, actual_peaks[i], actual_peaks_predicted[i], axs[0, i+1], axs[1, i+1])
-    plot_fields(1, actual_peaks[1], actual_peaks_predicted[1], axs[0, 2], axs[1, 2])
-    plot_fields(2, actual_peaks[2], actual_peaks_predicted[2], axs[0, 3], axs[1, 3])
-    axs[1, 1].set_position(axs[1, 1].get_position().translated(0, 0.04))  
-    axs[1, 2].set_position(axs[1, 2].get_position().translated(0, 0.04))  
-    axs[1, 3].set_position(axs[1, 3].get_position().translated(0, 0.04))  
+
+    axs[1, 1].set_position(axs[1, 1].get_position().translated(0, 0.04))
+    axs[1, 2].set_position(axs[1, 2].get_position().translated(0, 0.04))
+    axs[1, 3].set_position(axs[1, 3].get_position().translated(0, 0.04))
     plt.tight_layout()
     pos = axs[1, 0].get_position()
     new_width = pos.width * 0.7  # 40% smaller
@@ -217,6 +225,6 @@ def save_plot_at_peaks(path, plot_args, max_freq):
     new_left = pos.x0 + 0.04
     new_bottom = pos.y0 + 0.13
     axs[1, 0].set_position([new_left, new_bottom, new_width, new_height])
-    plt.savefig(path + ".pdf", transparent=False)
+    plt.savefig(path + ".pdf", transparent=True)
 
     return fig

@@ -38,19 +38,19 @@ def get_root_logger(log_file=None, log_level=logging.INFO):
     return logger
 
 
-def init_train_logger(args, config):
+def init_train_logger(args, config, save_directory=None):
     # Make sure previous handlers are removed
     for handler in logging.root.handlers[:]:
         logging.root.removeHandler(handler)
-
-    save_directory = args.dir
+    if save_directory is None:
+        save_directory = args.dir
     os.makedirs(os.path.abspath(save_directory), exist_ok=True)
     timestamp = time.strftime('%Y%m%d_%H%M%S', time.localtime())
     log_file = os.path.join(save_directory, f'{timestamp}.log')
     logger = get_root_logger(log_file=log_file)
     logger.info(f'Config:\n{args}')
     logger.info(f'Config:\n{config}')
-    shutil.copy(args.config, os.path.join(save_directory, os.path.basename(args.config)))
+    #shutil.copy(args.config, os.path.join(save_directory, os.path.basename(args.config)))
     return logger
 
 

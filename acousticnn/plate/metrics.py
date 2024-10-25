@@ -10,8 +10,8 @@ def detect_peaks(spectrum, prominence=0.5):
 
 
 def backtransform(spectrum, mean, std, do_power=True):
-    mean = mean[:spectrum.shape[1]]
-    spectrum = (spectrum * std + mean)
+    mean = mean.array.cpu().numpy()[:spectrum.shape[1]]
+    spectrum = (spectrum * std.cpu().numpy() + mean)
     if do_power:
         spectrum = np.power(10, spectrum * 1e-1)
     return spectrum
@@ -87,7 +87,9 @@ def peak_frequency_error(actual_amplitudes, predicted_amplitudes, prominence_thr
         )
         ratios.append(peak_ratio), n_peaks.append(n_peak), save_ratios.append(save_peak_ratio)
         amplitude_distance.append(matched_amplitude_distance), frequency_distance.append(matched_frequency_distance)
+    save_rmean = 1 - np.nanmean(save_ratios)
 
-    results = {"peak_ratio": np.array(ratios), "save_peak_ratio": np.array(save_ratios), "amplitude_distance": np.array(amplitude_distance),
-                 "frequency_distance": np.array(frequency_distance)}
+    results = {"save_rmean": save_rmean, "amplitude_distance": np.nanmean(amplitude_distance),
+                 "frequency_distance": np.nanmean(frequency_distance)}
+
     return results
