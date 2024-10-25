@@ -61,16 +61,26 @@ python scripts/generate_videos.py --ckpt path/to/trained_model --model_cfg fqo_u
 Change the model_cfg and config args to specify the model and dataset respectively and specify the path to a trained model checkpoint via --ckpt.
 --save_path specifies where the resulting videos are saved.
 
-## Example Results
+## Design optimization
+
+For generating novel plate designs with optimized vibrational properties please take a look at [this repository](https://github.com/ecker-lab/diffusion_minimizing_vibrations).
+
+## Example results
 
 The videos show example predictions for samples from the test set. For the first video for each dataset changes in magnitude are not displayed, which makes the changes more easily visible. For the second video for each dataset changes in magnitude are displayed, which means that many details are lost but the resonance frequencies can be seen.
 
-### V5000 Dataset
+### V5000 dataset
 
-TODO
-### G5000 Dataset
+https://github.com/user-attachments/assets/e02738d3-b264-4a01-92c3-d6f24dda59fa
 
-TODO
+https://github.com/user-attachments/assets/4ba3480f-cfb1-4aaf-882d-8f02eb5a37ff
+
+### G5000 dataset
+
+https://github.com/user-attachments/assets/664ede54-94cb-40c9-bf4c-988116bf76d1
+
+https://github.com/user-attachments/assets/cd74d98d-4f4c-4052-a8df-9c83a3329685
+
 
 ## Acknowledgments
 
