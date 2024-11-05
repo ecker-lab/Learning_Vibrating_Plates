@@ -16,7 +16,6 @@ https://github.com/JanvDelden/Learning_Vibrating_Plates/assets/64748695/f59e46c6
 
 The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
-**Note: The files are in the process of being updated for our final version. Right now, this still refers to the old files.**
 | Setting        | Dataset Download                                             | Dataset Size |
 | ----------- | :----------------------------------------------------------- | ------------ |
 | small example file   | ```python acousticnn/utils/download.py --dataset_name single_example_G5000 --root_folder data/example``` | 4 GB        |
