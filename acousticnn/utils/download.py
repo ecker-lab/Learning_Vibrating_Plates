@@ -11,24 +11,24 @@ BASE_PATH = "https://data.goettingen-research-online.de/api/access/datafile/:per
 
 class G5000:
     files = [
-        ["TODO", "G5000_BCFP_1000_test.h5"],
-        ["TODO", "G5000_BCFP_2000_train.h5"],
-        ["TODO", "G5000_BCFP_3000_train.h5"],
+        ["APW6VO", "G5000_BCFP_1000_test.h5"],
+        ["INRTIJ", "G5000_BCFP_2000_train.h5"],
+        ["5XEC7Z", "G5000_BCFP_3000_train.h5"],
     ]
 
 class V5000:
     files = [
-        ["TODO", "V5000_1000_test.h5"],
-        ["TODO", "V5000_2000_train.h5"],
-        ["TODO", "V5000_3000_train.h5"]
+        ["RFXBSR", "V5000_1000_test.h5"],
+        ["F0IJ7E", "V5000_2000_train.h5"],
+        ["2I5P0G", "V5000_3000_train.h5"]
     ]
 
 class single_example_G5000:
-    files = [["TODO", "G5000_BCFP_1000_test.h5"]]
+    files = [["APW6VO", "G5000_BCFP_1000_test.h5"]]
 
 class V50k:
     files = [
-        ["TODO", "V50000_15f.h5"]
+        ["V5YOL1", "V50000_15f.h5"]
     ]
 
 
