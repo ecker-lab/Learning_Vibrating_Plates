@@ -10,9 +10,12 @@ The paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fC
 
 ## Data
 
-We provide a notebook [here](notebooks/view_dataset.ipynb), that enables the quick and easy visualization of our dataset. The data is available from [this data repository](https://doi.org/10.25625/UWF7RB) in the hdf5 format. There, we also provide information on the structure of the hdf5 files and how to access the data.
+We provide a notebook [here](notebooks/view_dataset.ipynb), that enables the quick and easy visualization of our dataset. The data is available from [this data repository](https://doi.org/10.25625/UWF7RB) in the hdf5 format. There, we also provide information on the structure of the hdf5 files and how to access the data. Alternatively, the data is available from [google drive](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link).
 
-https://github.com/JanvDelden/Learning_Vibrating_Plates/assets/64748695/f59e46c6-a7ce-41b1-af53-9a0a14c52aaf
+
+
+https://github.com/user-attachments/assets/bf09cbf3-8e70-4919-9758-0c6f48a36e43
+
 
 The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
