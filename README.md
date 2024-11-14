@@ -6,7 +6,7 @@ To address the benchmark task, we propose a new network architecture, named Freq
 The paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
 
 # Update
-* Our paper has been accepted to Neurips 2024! We will share a link to the updated version of our paper soon.
+* Our paper has been accepted to Neurips 2024! The updated paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
 
 ## Data
 
