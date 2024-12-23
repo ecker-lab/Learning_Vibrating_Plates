@@ -7,17 +7,16 @@ The paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fC
 
 # Update
 * Our paper has been accepted to Neurips 2024! The updated paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
+* We recommend downloading the dataset from this [google drive folder](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link).
 
 ## Data
 
-We provide a notebook [here](notebooks/view_dataset.ipynb), that enables the quick and easy visualization of our dataset. The data is available from [this data repository](https://doi.org/10.25625/UWF7RB) in the hdf5 format. There, we also provide information on the structure of the hdf5 files and how to access the data. Alternatively, the data is available from [google drive](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link).
-
-
+We provide a notebook [here](notebooks/view_dataset.ipynb), that enables the quick and easy visualization of our dataset. The data is available from [google drive](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link) in the hdf5 format. Alternately, the data is available from [this data repository](https://doi.org/10.25625/UWF7RB), but there were some reports with issues with downloading the files, therefore we recommend using the google drive link! There, we also provide information on the structure of the hdf5 files and how to access the data. 
 
 https://github.com/user-attachments/assets/bf09cbf3-8e70-4919-9758-0c6f48a36e43
 
 
-The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, we recommend using the script acousticnn/utils/download.py. Here we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
+The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, from the dataset repository, the script acousticnn/utils/download.py can be used. However, we recommend using the [google drive](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link) link, as there were some reports with issues when downloading the files. Here, we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
 | Setting        | Dataset Download                                             | Dataset Size |
 | ----------- | :----------------------------------------------------------- | ------------ |
