@@ -6,6 +6,7 @@ To address the benchmark task, we propose a new network architecture, named Freq
 The paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
 
 # Update
+* [Oktober 2025] Check out our new work on design optimization using guided flow matching for plate beading patterns: [link](https://github.com/ecker-lab/Optimizing_Vibrating_Plates)
 * Our paper has been accepted to Neurips 2024! The updated paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
 * We recommend downloading the dataset from this [google drive folder](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link).
 
