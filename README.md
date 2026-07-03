@@ -8,7 +8,7 @@ The paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fC
 # Update
 * [Oktober 2025] Check out our new work on design optimization using guided flow matching for plate beading patterns: [link](https://github.com/ecker-lab/Optimizing_Vibrating_Plates)
 * Our paper has been accepted to Neurips 2024! The updated paper is available from [openreview](https://openreview.net/forum?id=i4jZ6fCDdy&nesting=2&sort=date-desc).
-* We recommend downloading the dataset from this [google drive folder](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link).
+* We recommend downloading the dataset from huggingface [here](https://huggingface.co/datasets/JanvDelden/vibrating_plates).
 
 ## Data
 
@@ -18,7 +18,8 @@ https://huggingface.co/datasets/JanvDelden/vibrating_plates) in the hdf5 format.
 https://github.com/user-attachments/assets/bf09cbf3-8e70-4919-9758-0c6f48a36e43
 
 
-The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, from the dataset repository, the script acousticnn/utils/download.py can be used. However, we recommend using the [google drive](https://drive.google.com/drive/folders/1sJvcalpFBhYMamdMDpBx6PBU7QPjROL0?usp=drive_link) link, as there were some reports with issues when downloading the files. Here, we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
+The video shows how the vibration patterns change for three example plates with the frequency. Changes in magnitude are not displayed. To download the data, from the dataset repository, the script acousticnn/utils/download.py can be used. However, we recommend using [huggingface](
+https://huggingface.co/datasets/JanvDelden/vibrating_plates), as there were some reports with issues when downloading the files. Here, we list out the commands to download the available dataset settings. Please note, that the root_folder must already exist:
 
 | Setting        | Dataset Download                                             | Dataset Size |
 | ----------- | :----------------------------------------------------------- | ------------ |
